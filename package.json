@@ -1,0 +1,27 @@
+{
+  "name": "mapbox-density-map",
+  "version": "1.0.0",
+  "description": "Try to build a slippy map similar to the one built earlier with OpenLayers",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html",
+    "build": "parcel build --public-url . --out-dir docs index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imdataman/mapbox-density-map.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/imdataman/mapbox-density-map/issues"
+  },
+  "homepage": "https://github.com/imdataman/mapbox-density-map#readme",
+  "dependencies": {
+    "mapbox-gl": "^1.5.1"
+  },
+  "devDependencies": {
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  }
+}

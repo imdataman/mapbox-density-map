@@ -73,6 +73,7 @@ var overlay = document.getElementById('map-overlay');
 var villageLegend = document.getElementById('villageLegend');
 var townLegend = document.getElementById('townLegend');
 var countyLegend = document.getElementById('countyLegend');
+var loadingGif = document.getElementById('loading');
 
 var map = new mapboxgl.Map({
     container: 'map',
@@ -101,6 +102,8 @@ map.on('load', function () {
         .await(ready);
 
     function ready(error, county, town, village, townLabel, countyLabel, villageInfo) {
+        loadingGif.style.display = "none";
+
         var countyData = topojson.feature(county, county.objects.tracts);
         var townData = topojson.feature(town, town.objects.tracts);
         var villageData = topojson.feature(village, village.objects.tracts);

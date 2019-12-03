@@ -84,7 +84,7 @@
         }
 
         .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
-            margin: 10px 45vw 0 0;
+            margin: 10px 47vw 0 0;
         }
 
         .mapboxgl-ctrl-group>button+button {
@@ -216,6 +216,18 @@
         .select-css option {
             font-weight: normal;
         }
+
+        #loading {
+            display: inline-block;
+            position: absolute;
+            bottom: 50%;
+            right: 50%;
+            z-index: 1000;
+        }
+
+        #loading img {
+            height: 32px;
+        }
     </style>
     <div id="mainTitle">
         <p>台灣人口密度地圖</p>
@@ -259,7 +271,9 @@
         <img id='townLegend' src="image/legendTown.svg">
         <img id='countyLegend' src="image/legendCounty.svg">
     </div>
-
+    <div id='loading'>
+        <img src="image/loading.gif">
+    </div>
     <script src="main.js"></script>
 
 </body>

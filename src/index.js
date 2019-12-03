@@ -32,10 +32,10 @@ if (mobile) {
     fontSize = 18;
     document.getElementById('map-overlay').style.left = "13.5%";
     document.getElementById('map-overlay').style.bottom = "25%";
-    /* var scale = 'scale(1)';
+    var scale = 'scale(1)';
     document.body.style.webkitTransform = scale; // Chrome, Opera, Safari
     document.body.style.msTransform = scale; // IE 9
-    document.body.style.transform = scale; */
+    document.body.style.transform = scale;
 }
 
 var blankStyle = {
@@ -122,15 +122,7 @@ map.on('load', function () {
                     "#bdbdbd", 1, "#f7fbff", 100, "#deebf7", 250, "#c6dbef", 500, "#9ecae1", 1000, "#6baed6", 2500, "#4292c6", 5000, "#2171b5", 10000, "#084594"
                 ],
                 'fill-opacity': 0.8,
-                'fill-outline-color': [
-                    'case',
-                    ['boolean',
-                        ['feature-state', 'hover'],
-                        false
-                    ],
-                    'rgba(0, 0, 0, 1)',
-                    'rgba(0, 0, 0, 0)'
-                ]
+                'fill-outline-color': 'rgba(0, 0, 0, 0)'
             }
         });
 
@@ -144,6 +136,30 @@ map.on('load', function () {
                 'line-color': "#000",
                 'line-opacity': 0.8,
                 'line-width': 1
+            }
+        });
+
+        map.addLayer({
+            'id': 'countySelected',
+            'source': 'county',
+            'maxzoom': zoomThreshold[0],
+            'type': 'line',
+            'paint': {
+                'line-color': [
+                    'case',
+                    ['boolean',
+                        ['feature-state', 'hover'],
+                        false
+                    ],
+                    'rgba(0, 0, 0, 1)',
+                    'rgba(0, 0, 0, 0)'
+                ],
+                'line-width': [
+                    'interpolate', ['linear'],
+                    ['zoom'],
+                    6, 2,
+                    zoomThreshold[0], 3
+                ],
             }
         });
 
@@ -165,15 +181,7 @@ map.on('load', function () {
                     "#bdbdbd", 1, "#f7fbff", 250, "#deebf7", 500, "#c6dbef", 1000, "#9ecae1", 2500, "#6baed6", 5000, "#4292c6", 10000, "#2171b5", 25000, "#084594"
                 ],
                 'fill-opacity': 0.8,
-                'fill-outline-color': [
-                    'case',
-                    ['boolean',
-                        ['feature-state', 'hover'],
-                        false
-                    ],
-                    'rgba(0, 0, 0, 1)',
-                    'rgba(0, 0, 0, 0)'
-                ]
+                'fill-outline-color': 'rgba(0, 0, 0, 0)'
             }
         });
 
@@ -186,6 +194,31 @@ map.on('load', function () {
                 'line-color': "#000",
                 'line-opacity': 0.8,
                 'line-width': 1
+            }
+        });
+
+        map.addLayer({
+            'id': 'townSelected',
+            'source': 'town',
+            'minzoom': zoomThreshold[0],
+            'maxzoom': zoomThreshold[1],
+            'type': 'line',
+            'paint': {
+                'line-color': [
+                    'case',
+                    ['boolean',
+                        ['feature-state', 'hover'],
+                        false
+                    ],
+                    'rgba(0, 0, 0, 1)',
+                    'rgba(0, 0, 0, 0)'
+                ],
+                'line-width': [
+                    'interpolate', ['linear'],
+                    ['zoom'],
+                    zoomThreshold[0], 3,
+                    zoomThreshold[1], 6
+                ]
             }
         });
 
@@ -206,7 +239,17 @@ map.on('load', function () {
                     "#bdbdbd", 1, "#f7fbff", 500, "#deebf7", 1000, "#c6dbef", 2500, "#9ecae1", 5000, "#6baed6", 10000, "#4292c6", 25000, "#2171b5", 50000, "#084594"
                 ],
                 'fill-opacity': 0.8,
-                'fill-outline-color': [
+                'fill-outline-color': 'rgba(0, 0, 0, 0)'
+            }
+        });
+
+        map.addLayer({
+            'id': 'villageSelected',
+            'source': 'village',
+            'minzoom': zoomThreshold[1],
+            'type': 'line',
+            'paint': {
+                'line-color': [
                     'case',
                     ['boolean',
                         ['feature-state', 'hover'],
@@ -214,6 +257,12 @@ map.on('load', function () {
                     ],
                     'rgba(0, 0, 0, 1)',
                     'rgba(0, 0, 0, 0)'
+                ],
+                'line-width': [
+                    'interpolate', ['linear'],
+                    ['zoom'],
+                    zoomThreshold[1], 6,
+                    16, 10
                 ]
             }
         });
@@ -348,54 +397,83 @@ map.on('load', function () {
 });
 
 function addTooltip(id) {
-    map.on('mousemove', id, function (e) {
-        // Change the cursor style as a UI indicator.
-        map.getCanvas().style.cursor = 'pointer';
+    if (mobile) {
+        map.on('touchend', id, function (e) {
+            // Change the cursor style as a UI indicator.
+            map.getCanvas().style.cursor = 'pointer';
 
-        overlay.innerHTML = '';
+            var specificSource = id.slice(0, 4) == "coun" ? "county" : id.slice(0, 4) == "town" ? "town" : "village";
 
-        var coordinates = e.features[0].geometry.coordinates.slice();
-        /* popup.setLngLat(e.lngLat)
-            .setHTML(description)
-            .addTo(map); */
+            overlay.innerHTML = '';
 
-        if (hoveredFeature) {
-            map.removeFeatureState({
-                source: id.slice(0, -7),
-                id: hoveredFeature
+            if (hoveredFeature) {
+                map.removeFeatureState(hoveredFeature);
+            }
+
+            hoveredFeature = {
+                source: specificSource,
+                id: e.features[0].id
+            };
+
+            map.setFeatureState({
+                source: specificSource,
+                id: e.features[0].id,
+            }, {
+                hover: true
             });
-        }
 
-        hoveredFeature = e.features[0].id;
+            var title = e.features[0].properties.name;
+            var population = e.features[0].properties.pop.toLocaleString();
 
-        // When the mouse moves over the earthquakes-viz layer, update the
-        // feature state for the feature under the mouse
-        map.setFeatureState({
-            source: id.slice(0, -7),
-            id: hoveredFeature,
-        }, {
-            hover: true
+            overlay.innerHTML = "<span>地區</span><br/>" + title + "<br/><br/><span>人口密度</span><br/>" + population + "人／km²";
+            overlay.style.display = 'inline-block';
+        });
+    } else {
+        map.on('mousemove', id, function (e) {
+            // Change the cursor style as a UI indicator.
+            map.getCanvas().style.cursor = 'pointer';
+
+            var specificSource = id.slice(0, 4) == "coun" ? "county" : id.slice(0, 4) == "town" ? "town" : "village";
+
+            overlay.innerHTML = '';
+
+            if (hoveredFeature) {
+                map.removeFeatureState({
+                    source: specificSource,
+                    id: hoveredFeature
+                });
+            }
+
+            hoveredFeature = e.features[0].id;
+            map.setFeatureState({
+                source: specificSource,
+                id: hoveredFeature,
+            }, {
+                hover: true
+            });
+
+            var title = e.features[0].properties.name;
+            var population = e.features[0].properties.pop.toLocaleString();
+
+            overlay.innerHTML = "<span>地區</span><br/>" + title + "<br/><br/><span>人口密度</span><br/>" + population + "人／km²";
+            overlay.style.display = 'inline-block';
         });
 
-        var title = e.features[0].properties.name;
-        var population = e.features[0].properties.pop.toLocaleString();
+        map.on('mouseleave', id, function () {
+            var specificSource = id.slice(0, 4) == "coun" ? "county" : id.slice(0, 4) == "town" ? "town" : "village";
 
-        overlay.innerHTML = "<span>地區</span><br/>" + title + "<br/><br/><span>人口密度</span><br/>" + population + "人／km²";
-        overlay.style.display = 'inline-block';
-    });
-
-    map.on('mouseleave', id, function () {
-        if (hoveredFeature) {
-            map.removeFeatureState({
-                source: id.slice(0, -7),
-                id: hoveredFeature
-            });
-        }
-        hoveredFeature = null;
-        map.getCanvas().style.cursor = '';
-        overlay.innerHTML = '';
-        overlay.style.display = 'none';
-    });
+            if (hoveredFeature) {
+                map.removeFeatureState({
+                    source: specificSource,
+                    id: hoveredFeature
+                });
+            }
+            hoveredFeature = null;
+            map.getCanvas().style.cursor = '';
+            overlay.innerHTML = '';
+            overlay.style.display = 'none';
+        });
+    }
 }
 
 map.on('zoom', function () {

@@ -376,10 +376,6 @@ map.on('load', function () {
                             source: "village",
                             id: destination.id
                         };
-
-                        map.setFeatureState(hoveredFeature, {
-                            hover: true
-                        });
                     } else {
                         if (hoveredFeature) {
                             map.removeFeatureState({

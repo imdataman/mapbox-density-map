@@ -367,20 +367,32 @@ map.on('load', function () {
                         maxZoom: 14
                     });
 
-                    if (hoveredFeature) {
-                        map.removeFeatureState({
+                    if (mobile) {
+                        if (hoveredFeature) {
+                            map.removeFeatureState(hoveredFeature);
+                        }
+
+                        hoveredFeature = {
                             source: "village",
-                            id: hoveredFeature
+                            id: destination.id
+                        };
+
+                        map.setFeatureState(hoveredFeature, {
+                            hover: true
                         });
+                    } else {
+                        if (hoveredFeature) {
+                            map.removeFeatureState({
+                                source: "village",
+                                id: hoveredFeature
+                            });
+                        }
+                        hoveredFeature = destination.id;
                     }
 
-                    hoveredFeature = destination.id;
-
-                    // When the mouse moves over the earthquakes-viz layer, update the
-                    // feature state for the feature under the mouse
                     map.setFeatureState({
                         source: "village",
-                        id: hoveredFeature,
+                        id: destination.id,
                     }, {
                         hover: true
                     });

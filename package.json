@@ -4,8 +4,7 @@
   "description": "Try to build a slippy map similar to the one built earlier with OpenLayers",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel index.html",
-    "build": "parcel build --public-url . --out-dir docs index.html"
+    "start:dev": "webpack-dev-server"
   },
   "repository": {
     "type": "git",
@@ -22,6 +21,7 @@
   },
   "devDependencies": {
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
   }
 }

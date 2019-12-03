@@ -82,11 +82,6 @@ var map = new mapboxgl.Map({
     zoom: initialZoom
 });
 
-var popup = new mapboxgl.Popup({
-    closeButton: false,
-    closeOnClick: false
-});
-
 map.addControl(new mapboxgl.NavigationControl({
     showCompass: false
 }));

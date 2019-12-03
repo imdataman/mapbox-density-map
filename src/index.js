@@ -398,7 +398,7 @@ map.on('load', function () {
 
 function addTooltip(id) {
     if (mobile) {
-        map.on('touchend', id, function (e) {
+        map.on('click', id, function (e) {
             // Change the cursor style as a UI indicator.
             map.getCanvas().style.cursor = 'pointer';
 
